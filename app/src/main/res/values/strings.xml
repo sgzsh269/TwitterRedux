@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Macaw</string>
+    <string name="login_label">Log in</string>
+    <string name="title_activity_timeline">TimelineActivity</string>
+    <string name="welcome">Welcome to Macaw.</string>
+
+</resources>
