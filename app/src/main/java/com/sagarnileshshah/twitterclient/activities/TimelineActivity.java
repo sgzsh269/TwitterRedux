@@ -18,6 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.activeandroid.ActiveAndroid;
+import com.activeandroid.Configuration;
 import com.codepath.apps.twitterclient.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -148,6 +150,10 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
                 saveTweetsToDB(mTweets);
                 startActivity(intent);
                 finish();
+                return true;
+            case R.id.menu_compose:
+                renderComposeFragment();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -228,10 +234,10 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
             ApplicationInfo ai = getPackageManager().getApplicationInfo(this.getPackageName(), PackageManager.GET_META_DATA);
             Bundle bundle = ai.metaData;
             String dbName = bundle.getString("AA_DB_NAME");
-//            ActiveAndroid.dispose();
-//            this.deleteDatabase(dbName);
-//            Configuration dbConfiguration = new Configuration.Builder(this).setDatabaseName(dbName).create();
-//            ActiveAndroid.initialize(dbConfiguration);
+            ActiveAndroid.dispose();
+            this.deleteDatabase(dbName);
+            Configuration dbConfiguration = new Configuration.Builder(this).setDatabaseName(dbName).create();
+            ActiveAndroid.initialize(dbConfiguration);
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();

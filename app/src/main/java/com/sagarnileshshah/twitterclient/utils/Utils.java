@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.twitterclient.R;
@@ -91,36 +90,32 @@ public class Utils {
             iconImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String videoUrl = tweet.getExtendedEntities().getMedia().get(0).getVideoInfo().getVariants().get(0).getUrl();
-                    try {
-                        scalableVideoView.setDataSource(context, Uri.parse(videoUrl));
-                        scalableVideoView.prepareAsync(new MediaPlayer.OnPreparedListener() {
+                    scalableVideoView.prepareAsync(new MediaPlayer.OnPreparedListener() {
 
-                            @Override
-                            public void onPrepared(MediaPlayer mp) {
-                                mp.start();
-                                scalableVideoView.setVisibility(View.VISIBLE);
-                                iconImage.setVisibility(View.GONE);
-                                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                                    @Override
-                                    public void onCompletion(MediaPlayer mp) {
-                                        iconImage.setVisibility(View.VISIBLE);
-                                    }
-                                });
-                            }
-                        });
-                    } catch (IOException e) {
-                        Toast.makeText(context, "Sorry, Video unavailable at the moment.", Toast.LENGTH_LONG).show();
-                    }
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            mp.start();
+                            scalableVideoView.setVisibility(View.VISIBLE);
+                            iconImage.setVisibility(View.GONE);
+                            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                @Override
+                                public void onCompletion(MediaPlayer mp) {
+                                    iconImage.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }
+                    });
                 }
             });
 
             scalableVideoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (scalableVideoView != null && scalableVideoView.isPlaying()) {
-                        scalableVideoView.stop();
-                        iconImage.setVisibility(View.VISIBLE);
+                    if (scalableVideoView != null) {
+                        if (scalableVideoView.isPlaying()) {
+                            scalableVideoView.stop();
+                            iconImage.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
             });
@@ -129,6 +124,14 @@ public class Utils {
                 iconImage.setVisibility(View.VISIBLE);
                 ViewGroup.LayoutParams mediaImageLayoutParams = mediaImage.getLayoutParams();
                 scalableVideoView.setLayoutParams(mediaImageLayoutParams);
+                String videoUrl = tweet.getExtendedEntities().getMedia().get(0).getVideoInfo().getVariants().get(0).getUrl();
+                try {
+                    scalableVideoView.setDataSource(context, Uri.parse(videoUrl));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
             } else {
                 iconImage.setVisibility(View.GONE);
                 scalableVideoView.setVisibility(View.GONE);
@@ -162,7 +165,7 @@ public class Utils {
                 = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         boolean value = activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
-        if(!value){
+        if (!value) {
             renderSnackBar(activity, "No network connection. Please check network settings and activate either Wifi or Data.");
         }
         return value;
@@ -180,7 +183,7 @@ public class Utils {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if(!value){
+        if (!value) {
             renderSnackBar(activity, "Current network not connected to the internet. Please try again after some time or contact network operator.");
         }
         return value;

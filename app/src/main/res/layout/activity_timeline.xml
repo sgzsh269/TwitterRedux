@@ -25,6 +25,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@color/colorPrimary"
-        android:src="@drawable/ic_edit" />
+        android:src="@drawable/ic_compose" />
 
 </android.support.design.widget.CoordinatorLayout>

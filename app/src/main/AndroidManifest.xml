@@ -18,8 +18,9 @@
     <application
         android:name="com.sagarnileshshah.twitterclient.TwitterApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data
             android:name="AA_DB_NAME"
@@ -27,6 +28,13 @@
         <meta-data
             android:name="AA_DB_VERSION"
             android:value="1" />
+        <meta-data
+            android:name="AA_MODELS"
+            android:value="com.sagarnileshshah.twitterclient.models.Tweet, com.sagarnileshshah.twitterclient.models.User,
+            com.sagarnileshshah.twitterclient.models.Entities___, com.sagarnileshshah.twitterclient.models.Url_____,
+            com.sagarnileshshah.twitterclient.models.ExtendedEntities_, com.sagarnileshshah.twitterclient.models.Medium______,
+            com.sagarnileshshah.twitterclient.models.VideoInfo, com.sagarnileshshah.twitterclient.models.Variant" />
+
 
         <activity
             android:name="com.sagarnileshshah.twitterclient.activities.LoginActivity"

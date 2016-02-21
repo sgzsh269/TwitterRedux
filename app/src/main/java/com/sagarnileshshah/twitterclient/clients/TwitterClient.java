@@ -52,7 +52,7 @@ public class TwitterClient extends OAuthBaseClient {
 		// String apiUrl = getApiUrl("statuses/home_timeline.json");
 		String apiUrl = getApiUrl("statuses/user_timeline.json");
 		RequestParams params = new RequestParams();
-		params.put("count", 5);
+		params.put("count", 10);
 		params.put("since_id", sinceId);
 		client.get(apiUrl, params, handler);
 		return true;
@@ -66,7 +66,7 @@ public class TwitterClient extends OAuthBaseClient {
 		//String apiUrl = getApiUrl("statuses/home_timeline.json");
 		String apiUrl = getApiUrl("statuses/user_timeline.json");
 		RequestParams params = new RequestParams();
-		params.put("count", 5);
+		params.put("count", 10);
 		params.put("max_id", maxId - 1);
 		client.get(apiUrl, params, handler);
 		return true;
