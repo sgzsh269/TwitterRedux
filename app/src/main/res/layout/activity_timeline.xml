@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <include layout="@layout/toolbar_main"/>
+        <include layout="@layout/toolbar_common"/>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
+        app:backgroundTint="@color/colorPrimary"
+        android:src="@drawable/ic_edit" />
 
 </android.support.design.widget.CoordinatorLayout>

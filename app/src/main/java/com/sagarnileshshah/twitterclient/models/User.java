@@ -1,143 +1,166 @@
 
 package com.sagarnileshshah.twitterclient.models;
 
-import javax.annotation.Generated;
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
+import javax.annotation.Generated;
+
+@Table(name="user", id="_id")
+@Parcel(value = Parcel.Serialization.BEAN, analyze = {User.class})
 @Generated("org.jsonschema2pojo")
-public class User {
+public class User extends Model {
+
+    public User(){
+        super();
+    }
+
+    @Column(onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
+    public Tweet tweet;
 
     @SerializedName("id")
     @Expose
-    private Long id;
+    public Long id;
     @SerializedName("id_str")
     @Expose
-    private String idStr;
+    public String idStr;
+
     @SerializedName("name")
+    @Column
     @Expose
-    private String name;
+    public String name;
+
+    @Column
     @SerializedName("screen_name")
     @Expose
-    private String screenName;
+    public String screenName;
+
     @SerializedName("location")
     @Expose
-    private String location;
+    public String location;
     @SerializedName("description")
     @Expose
-    private String description;
+    public String description;
     @SerializedName("url")
     @Expose
-    private String url;
+    public String url;
     @SerializedName("entities")
     @Expose
-    private Entities entities;
+    public Entities entities;
     @SerializedName("protected")
     @Expose
-    private Boolean _protected;
+    public Boolean _protected;
     @SerializedName("followers_count")
     @Expose
-    private Long followersCount;
+    public Long followersCount;
     @SerializedName("friends_count")
     @Expose
-    private Long friendsCount;
+    public Long friendsCount;
     @SerializedName("listed_count")
     @Expose
-    private Long listedCount;
+    public Long listedCount;
     @SerializedName("created_at")
     @Expose
-    private String createdAt;
+    public String createdAt;
     @SerializedName("favourites_count")
     @Expose
-    private Long favouritesCount;
+    public Long favouritesCount;
     @SerializedName("utc_offset")
     @Expose
-    private Long utcOffset;
+    public Long utcOffset;
     @SerializedName("time_zone")
     @Expose
-    private String timeZone;
+    public String timeZone;
     @SerializedName("geo_enabled")
     @Expose
-    private Boolean geoEnabled;
+    public Boolean geoEnabled;
     @SerializedName("verified")
     @Expose
-    private Boolean verified;
+    public Boolean verified;
     @SerializedName("statuses_count")
     @Expose
-    private Long statusesCount;
+    public Long statusesCount;
     @SerializedName("lang")
     @Expose
-    private String lang;
+    public String lang;
     @SerializedName("contributors_enabled")
     @Expose
-    private Boolean contributorsEnabled;
+    public Boolean contributorsEnabled;
     @SerializedName("is_translator")
     @Expose
-    private Boolean isTranslator;
+    public Boolean isTranslator;
     @SerializedName("is_translation_enabled")
     @Expose
-    private Boolean isTranslationEnabled;
+    public Boolean isTranslationEnabled;
     @SerializedName("profile_background_color")
     @Expose
-    private String profileBackgroundColor;
+    public String profileBackgroundColor;
     @SerializedName("profile_background_image_url")
     @Expose
-    private String profileBackgroundImageUrl;
+    public String profileBackgroundImageUrl;
     @SerializedName("profile_background_image_url_https")
     @Expose
-    private String profileBackgroundImageUrlHttps;
+    public String profileBackgroundImageUrlHttps;
     @SerializedName("profile_background_tile")
     @Expose
-    private Boolean profileBackgroundTile;
+    public Boolean profileBackgroundTile;
+
+    @Column
     @SerializedName("profile_image_url")
     @Expose
-    private String profileImageUrl;
+    public String profileImageUrl;
+
     @SerializedName("profile_image_url_https")
     @Expose
-    private String profileImageUrlHttps;
+    public String profileImageUrlHttps;
     @SerializedName("profile_banner_url")
     @Expose
-    private String profileBannerUrl;
+    public String profileBannerUrl;
     @SerializedName("profile_link_color")
     @Expose
-    private String profileLinkColor;
+    public String profileLinkColor;
     @SerializedName("profile_sidebar_border_color")
     @Expose
-    private String profileSidebarBorderColor;
+    public String profileSidebarBorderColor;
     @SerializedName("profile_sidebar_fill_color")
     @Expose
-    private String profileSidebarFillColor;
+    public String profileSidebarFillColor;
     @SerializedName("profile_text_color")
     @Expose
-    private String profileTextColor;
+    public String profileTextColor;
     @SerializedName("profile_use_background_image")
     @Expose
-    private Boolean profileUseBackgroundImage;
+    public Boolean profileUseBackgroundImage;
     @SerializedName("has_extended_profile")
     @Expose
-    private Boolean hasExtendedProfile;
+    public Boolean hasExtendedProfile;
     @SerializedName("default_profile")
     @Expose
-    private Boolean defaultProfile;
+    public Boolean defaultProfile;
     @SerializedName("default_profile_image")
     @Expose
-    private Boolean defaultProfileImage;
+    public Boolean defaultProfileImage;
     @SerializedName("following")
     @Expose
-    private Boolean following;
+    public Boolean following;
     @SerializedName("follow_request_sent")
     @Expose
-    private Boolean followRequestSent;
+    public Boolean followRequestSent;
     @SerializedName("notifications")
     @Expose
-    private Boolean notifications;
+    public Boolean notifications;
 
     /**
      * 
      * @return
      *     The id
      */
-    public Long getId() {
+    public Long getRemoteId() {
         return id;
     }
 

@@ -1,10 +1,14 @@
 
 package com.sagarnileshshah.twitterclient.models;
 
-import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
+import javax.annotation.Generated;
+
+@Parcel(value = Parcel.Serialization.BEAN, analyze = {Medium_____.class})
 @Generated("org.jsonschema2pojo")
 public class Medium_____ {
 

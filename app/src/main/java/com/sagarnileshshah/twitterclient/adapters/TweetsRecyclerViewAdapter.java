@@ -1,6 +1,7 @@
 package com.sagarnileshshah.twitterclient.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +12,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.codepath.apps.twitterclient.R;
 import com.makeramen.roundedimageview.RoundedImageView;
-import com.sagarnileshshah.twitterclient.models.Medium______;
+import com.sagarnileshshah.twitterclient.activities.TweetDetailActivity;
 import com.sagarnileshshah.twitterclient.models.Tweet;
-import com.sagarnileshshah.twitterclient.models.Url_____;
 import com.sagarnileshshah.twitterclient.utils.Utils;
+import com.yqritc.scalablevideoview.ScalableVideoView;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -29,12 +32,12 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     private List<Tweet> mTweets;
     private Context mContext;
 
-    //private final int WITH_MEDIA = 0, WITHOUT_MEDIA = 1;
+    private final int WITH_RETWEET = 0, WITHOUT_RETWEET = 1;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public abstract class ViewHolderCommon extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @Bind(R.id.ivUserProfileImageUrl)
-        RoundedImageView ivUserProfileImageUrl;
+        @Bind(R.id.ivUserProfileImage)
+        RoundedImageView ivUserProfileImage;
 
         @Bind(R.id.tvUserName)
         TextView tvUserName;
@@ -60,9 +63,61 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         @Bind(R.id.ivIconVideo)
         ImageView ivIconVideo;
 
-        public ViewHolder(View itemView) {
+        @Bind(R.id.svvVideo)
+        ScalableVideoView svvVideo;
+
+        public ViewHolderCommon(View itemView) {
+            super(itemView);
+        }
+    }
+
+
+    public class ViewHolderWithRetweet extends ViewHolderCommon {
+
+        @Bind(R.id.ivTopIconRetweet)
+        ImageView ivTopIconRetweet;
+
+        @Bind(R.id.tvRetweetUser)
+        TextView tvRetweetUser;
+
+
+        public ViewHolderWithRetweet(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getLayoutPosition();
+            Tweet tweet = mTweets.get(position);
+
+            Intent intent = new Intent(mContext, TweetDetailActivity.class);
+            intent.putExtra("tweet", Parcels.wrap(tweet));
+
+            mContext.startActivity(intent);
+
+        }
+    }
+
+    public class ViewHolderWithoutRetweet extends ViewHolderCommon {
+
+        public ViewHolderWithoutRetweet(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getLayoutPosition();
+            Tweet tweet = mTweets.get(position);
+
+            Intent intent = new Intent(mContext, TweetDetailActivity.class);
+            intent.putExtra("tweet", Parcels.wrap(tweet));
+
+            mContext.startActivity(intent);
+
         }
     }
 
@@ -71,24 +126,37 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         mTweets = tweets;
     }
 
-//    @Override
-//    public int getItemViewType(int position) {
-//        Tweet tweet = mTweets.get(position);
-//        if (tweet.getEntities().getMedia().size() > 0){
-//            return WITH_MEDIA;
-//        } else {
-//            return WITHOUT_MEDIA;
-//        }
-//    }
-
+    @Override
+    public int getItemViewType(int position) {
+        Tweet tweet = mTweets.get(position);
+        if (tweet.getRetweetedStatus() != null) {
+            return WITH_RETWEET;
+        } else {
+            return WITHOUT_RETWEET;
+        }
+    }
 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View tweetView = inflater.inflate(R.layout.item_tweet_default, parent, false);
+        RecyclerView.ViewHolder viewHolder;
+        switch (viewType) {
+            case WITH_RETWEET:
+                View withRetweet = inflater.inflate(R.layout.item_tweet_with_retweet, parent, false);
+                viewHolder = new ViewHolderWithRetweet(withRetweet);
+                break;
 
-        ViewHolder viewHolder = new ViewHolder(tweetView);
+            case WITHOUT_RETWEET:
+                View withouRetweet = inflater.inflate(R.layout.item_tweet_default, parent, false);
+                viewHolder = new ViewHolderWithoutRetweet(withouRetweet);
+                break;
+
+            default:
+                View defaultView = inflater.inflate(R.layout.item_tweet_default, parent, false);
+                viewHolder = new ViewHolderWithoutRetweet(defaultView);
+                break;
+        }
 
         return viewHolder;
 
@@ -96,7 +164,20 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        configureViewHolder((ViewHolder) viewHolder, position);
+        switch (viewHolder.getItemViewType()) {
+            case WITH_RETWEET:
+                ViewHolderWithRetweet viewHolderWithRetweet = (ViewHolderWithRetweet) viewHolder;
+                configureViewHolderWithRetweet(viewHolderWithRetweet, position);
+                break;
+            case WITHOUT_RETWEET:
+                ViewHolderWithoutRetweet viewHolderWithoutRetweet = (ViewHolderWithoutRetweet) viewHolder;
+                configureViewHolderWithoutRetweet(viewHolderWithoutRetweet, position);
+                break;
+            default:
+                ViewHolderWithoutRetweet viewHolderDefault = (ViewHolderWithoutRetweet) viewHolder;
+                configureViewHolderWithoutRetweet(viewHolderDefault, position);
+                break;
+        }
     }
 
     @Override
@@ -104,50 +185,48 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         return mTweets.size();
     }
 
-    private void configureViewHolder(ViewHolder viewHolder, int position) {
+    private void configureViewHolderWithRetweet(ViewHolderWithRetweet viewHolderWithRetweet, int position) {
         Tweet tweet = mTweets.get(position);
-        viewHolder.tvUserName.setText(tweet.getUser().getName());
-        viewHolder.tvScreenName.setText("@" + tweet.getUser().getScreenName());
 
-        viewHolder.ivUserProfileImageUrl.setImageResource(0);
-        Glide.with(mContext).load(tweet.getUser().getProfileImageUrl().replace(".png", "_bigger.png")).into(viewHolder.ivUserProfileImageUrl);
+        viewHolderWithRetweet.tvRetweetUser.setText(tweet.getUser().getName() + " Retweeted");
+
+        configureViewHolderCommon(viewHolderWithRetweet, tweet.getRetweetedStatus());
+    }
+
+    private void configureViewHolderWithoutRetweet(ViewHolderWithoutRetweet viewHolderWithoutRetweet, int position) {
+        Tweet tweet = mTweets.get(position);
+
+        configureViewHolderCommon(viewHolderWithoutRetweet, tweet);
+    }
+
+
+    private void configureViewHolderCommon(ViewHolderCommon viewHolder, Tweet tweet) {
+
+        if (tweet.getUser() != null) {
+            viewHolder.tvUserName.setText(tweet.getUser().getName());
+            viewHolder.tvScreenName.setText("@" + tweet.getUser().getScreenName());
+
+            viewHolder.ivUserProfileImage.setImageResource(0);
+            Glide.with(mContext).load(tweet.getUser().getProfileImageUrl().replace(".png", "_bigger.png")).error(R.drawable.photo_placeholder).placeholder(R.drawable.photo_placeholder).dontAnimate().into(viewHolder.ivUserProfileImage);
+        }
 
         viewHolder.tvRelativeTimestamp.setText(Utils.getFormattedRelativeTimestamp(tweet.getCreatedAt()));
-        viewHolder.tvLikes.setText(String.valueOf(tweet.getFavoriteCount()));
-        viewHolder.tvRetweets.setText(String.valueOf(tweet.getRetweetCount()));
 
-        String text = tweet.getText();
-
-        if (tweet.getEntities().getUrls() != null && tweet.getEntities().getUrls().size() > 0) {
-            for (Url_____ url_____ : tweet.getEntities().getUrls()) {
-                String wrapperUrl = url_____.getUrl();
-                String displayUrl = url_____.getDisplayUrl();
-                text = text.replace(wrapperUrl, displayUrl);
-            }
-        }
-
-        if (tweet.getExtendedEntities() != null && tweet.getExtendedEntities().getMedia() != null && tweet.getExtendedEntities().getMedia().size() > 0) {
-            viewHolder.ivMedia.setVisibility(View.VISIBLE);
-            viewHolder.ivMedia.setImageResource(0);
-            Medium______ medium______ = tweet.getExtendedEntities().getMedia().get(0);
-            String type = medium______.getType();
-            if (type.equals("video")) {
-                viewHolder.ivIconVideo.setVisibility(View.VISIBLE);
-
-            } else {
-                viewHolder.ivIconVideo.setVisibility(View.GONE);
-            }
-
-            String wrapperUrl = medium______.getUrl();
-            text = text.replace(wrapperUrl, "");
-            String media_url = medium______.getMediaUrl() + ":medium";
-            Glide.with(mContext).load(media_url).into(viewHolder.ivMedia);
+        if (tweet.getFavoriteCount() > 0) {
+            viewHolder.tvLikes.setVisibility(View.VISIBLE);
+            viewHolder.tvLikes.setText(String.valueOf(tweet.getFavoriteCount()));
         } else {
-            viewHolder.ivMedia.setVisibility(View.GONE);
-            viewHolder.ivIconVideo.setVisibility(View.GONE);
+            viewHolder.tvLikes.setVisibility(View.GONE);
         }
 
-        viewHolder.tvText.setText(text);
+        if (tweet.getRetweetCount() > 0) {
+            viewHolder.tvRetweets.setVisibility(View.VISIBLE);
+            viewHolder.tvRetweets.setText(String.valueOf(tweet.getRetweetCount()));
+        } else {
+            viewHolder.tvRetweets.setVisibility(View.GONE);
+        }
+
+        Utils.unwrapAndRenderTweetTextLinks(mContext, tweet, viewHolder.ivMedia, viewHolder.svvVideo, viewHolder.ivIconVideo, viewHolder.tvText);
 
     }
 

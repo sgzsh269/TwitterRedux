@@ -1,116 +1,68 @@
 
 package com.sagarnileshshah.twitterclient.models;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Generated;
+
+@Parcel(value = Parcel.Serialization.BEAN, analyze = {Entities__.class})
 @Generated("org.jsonschema2pojo")
 public class Entities__ {
 
     @SerializedName("hashtags")
     @Expose
     private List<Hashtag> hashtags = new ArrayList<Hashtag>();
-    @SerializedName("symbols")
-    @Expose
-    private List<Object> symbols = new ArrayList<Object>();
-    @SerializedName("user_mentions")
-    @Expose
-    private List<Object> userMentions = new ArrayList<Object>();
     @SerializedName("urls")
     @Expose
-    private List<Object> urls = new ArrayList<Object>();
+    private List<UrlRetweeted> urls = new ArrayList<UrlRetweeted>();
     @SerializedName("media")
     @Expose
     private List<Medium> media = new ArrayList<Medium>();
 
     /**
-     * 
-     * @return
-     *     The hashtags
+     * @return The hashtags
      */
     public List<Hashtag> getHashtags() {
         return hashtags;
     }
 
     /**
-     * 
-     * @param hashtags
-     *     The hashtags
+     * @param hashtags The hashtags
      */
     public void setHashtags(List<Hashtag> hashtags) {
         this.hashtags = hashtags;
     }
 
-    /**
-     * 
-     * @return
-     *     The symbols
-     */
-    public List<Object> getSymbols() {
-        return symbols;
-    }
 
     /**
-     * 
-     * @param symbols
-     *     The symbols
+     * @return The urls
      */
-    public void setSymbols(List<Object> symbols) {
-        this.symbols = symbols;
-    }
-
-    /**
-     * 
-     * @return
-     *     The userMentions
-     */
-    public List<Object> getUserMentions() {
-        return userMentions;
-    }
-
-    /**
-     * 
-     * @param userMentions
-     *     The user_mentions
-     */
-    public void setUserMentions(List<Object> userMentions) {
-        this.userMentions = userMentions;
-    }
-
-    /**
-     * 
-     * @return
-     *     The urls
-     */
-    public List<Object> getUrls() {
+    public List<UrlRetweeted> getUrls() {
         return urls;
     }
 
     /**
-     * 
-     * @param urls
-     *     The urls
+     * @param urls The urls
      */
-    public void setUrls(List<Object> urls) {
+    public void setUrls(List<UrlRetweeted> urls) {
         this.urls = urls;
     }
 
     /**
-     * 
-     * @return
-     *     The media
+     * @return The media
      */
     public List<Medium> getMedia() {
         return media;
     }
 
     /**
-     * 
-     * @param media
-     *     The media
+     * @param media The media
      */
     public void setMedia(List<Medium> media) {
         this.media = media;

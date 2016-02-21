@@ -1,22 +1,39 @@
 
 package com.sagarnileshshah.twitterclient.models;
 
-import javax.annotation.Generated;
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-@Generated("org.jsonschema2pojo")
-public class Variant {
+import org.parceler.Parcel;
 
+import javax.annotation.Generated;
+
+@Table(name = "variant", id = "_id")
+@Parcel(value= Parcel.Serialization.BEAN, analyze = {Variant.class})
+@Generated("org.jsonschema2pojo")
+public class Variant extends Model {
+
+    public Variant(){
+        super();
+    }
+
+    @Column(onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
+    public VideoInfo videoInfo;
+    
     @SerializedName("bitrate")
     @Expose
-    private Long bitrate;
+    public Long bitrate;
     @SerializedName("content_type")
     @Expose
-    private String contentType;
+    public String contentType;
+
+    @Column
     @SerializedName("url")
     @Expose
-    private String url;
+    public String url;
 
     /**
      * 

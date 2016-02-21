@@ -1,29 +1,48 @@
 
 package com.sagarnileshshah.twitterclient.models;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Generated;
 
+@Table(name = "url", id = "_id")
+@Parcel(value = Parcel.Serialization.BEAN, analyze = {Url_____.class})
 @Generated("org.jsonschema2pojo")
-public class Url_____ {
+public class Url_____ extends Model {
 
+    public Url_____(){
+        super();
+    }
+
+    @Column(onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
+    public Entities___ entities;
+
+    @Column
     @SerializedName("url")
     @Expose
-    private String url;
+    public String url;
+
     @SerializedName("expanded_url")
     @Expose
-    private String expandedUrl;
+    public String expandedUrl;
+
+    @Column
     @SerializedName("display_url")
     @Expose
-    private String displayUrl;
+    public String displayUrl;
+
     @SerializedName("indices")
     @Expose
-    private List<Long> indices = new ArrayList<Long>();
+    public List<Long> indices = new ArrayList<Long>();
 
     /**
      * 

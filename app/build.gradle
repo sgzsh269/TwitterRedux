@@ -31,6 +31,8 @@ apply plugin: 'com.neenbedankt.android-apt'
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
+
+    apt 'org.parceler:parceler:1.0.4'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:support-v4:23.1.1'
@@ -46,6 +48,5 @@ dependencies {
     compile 'org.glassfish:javax.annotation:10.0-b28'
     compile 'com.makeramen:roundedimageview:2.2.1'
     compile 'joda-time:joda-time:2.9.2'
-
-    apt 'org.parceler:parceler:1.0.4'
+    compile 'com.yqritc:android-scalablevideoview:1.0.3'
 }

@@ -2,6 +2,7 @@ package com.sagarnileshshah.twitterclient;
 
 import android.content.Context;
 
+import com.activeandroid.ActiveAndroid;
 import com.sagarnileshshah.twitterclient.clients.TwitterClient;
 
 /*
@@ -19,6 +20,8 @@ public class TwitterApplication extends com.activeandroid.app.Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		ActiveAndroid.initialize(this);
+		ActiveAndroid.setLoggingEnabled(true);
 		TwitterApplication.context = this;
 	}
 

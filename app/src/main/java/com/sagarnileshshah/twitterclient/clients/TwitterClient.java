@@ -1,10 +1,12 @@
 package com.sagarnileshshah.twitterclient.clients;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.sagarnileshshah.twitterclient.utils.Utils;
 
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi;
@@ -42,21 +44,45 @@ public class TwitterClient extends OAuthBaseClient {
 	 *    i.e client.post(apiUrl, params, handler);
 	 */
 
-	public void getNewTweets(AsyncHttpResponseHandler handler, long sinceId) {
-		String apiUrl = getApiUrl("statuses/home_timeline.json");
+	public boolean getNewTweets(Activity activity, AsyncHttpResponseHandler handler, long sinceId) {
+		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
+			return false;
+		}
+		//TODO
+		// String apiUrl = getApiUrl("statuses/home_timeline.json");
+		String apiUrl = getApiUrl("statuses/user_timeline.json");
 		RequestParams params = new RequestParams();
-		params.put("count", 25);
+		params.put("count", 5);
 		params.put("since_id", sinceId);
 		client.get(apiUrl, params, handler);
+		return true;
 	}
 
-	public void getOldTweets(AsyncHttpResponseHandler handler, long maxId) {
-		String apiUrl = getApiUrl("statuses/home_timeline.json");
+	public boolean getOldTweets(Activity activity, AsyncHttpResponseHandler handler, long maxId) {
+		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
+			return false;
+		}
+		//TODO
+		//String apiUrl = getApiUrl("statuses/home_timeline.json");
+		String apiUrl = getApiUrl("statuses/user_timeline.json");
 		RequestParams params = new RequestParams();
-		params.put("count", 25);
+		params.put("count", 5);
 		params.put("max_id", maxId - 1);
 		client.get(apiUrl, params, handler);
+		return true;
 	}
 
-	//Compose tweet
+	public boolean postMessage(Activity activity, AsyncHttpResponseHandler handler, long tweetId, String message){
+		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
+			return false;
+		}
+		String apiUrl = getApiUrl("statuses/update.json");
+		RequestParams params = new RequestParams();
+		params.put("status", message);
+		if(tweetId != -1)
+			params.put("in_reply_to_status_id", tweetId);
+		client.post(apiUrl, params, handler);
+		return true;
+	}
+
 }

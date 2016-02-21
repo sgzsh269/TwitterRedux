@@ -1,118 +1,84 @@
 
 package com.sagarnileshshah.twitterclient.models;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Generated;
 
+
+@Table(name = "entities", id = "_id")
+@Parcel(value= Parcel.Serialization.BEAN, analyze = {Entities___.class})
 @Generated("org.jsonschema2pojo")
-public class Entities___ {
+public class Entities___ extends Model {
+
+    public Entities___() {
+        super();
+    }
+
+    @Column(onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
+    public Tweet tweet;
 
     @SerializedName("hashtags")
     @Expose
-    private List<Hashtag_> hashtags = new ArrayList<Hashtag_>();
-    @SerializedName("symbols")
-    @Expose
-    private List<Object> symbols = new ArrayList<Object>();
-    @SerializedName("user_mentions")
-    @Expose
-    private List<Object> userMentions = new ArrayList<Object>();
+    public List<Hashtag_> hashtags = new ArrayList<Hashtag_>();
     @SerializedName("urls")
     @Expose
-    private List<Url_____> urls = new ArrayList<Url_____>();
+    public List<Url_____> urls = new ArrayList<Url_____>();
     @SerializedName("media")
     @Expose
-    private List<Medium____> media = new ArrayList<Medium____>();
+    public List<Medium____> media = new ArrayList<Medium____>();
+
+    public void populateUrlsFromDB() {
+        this.urls = getMany(Url_____.class, "entities");
+    }
 
     /**
-     * 
-     * @return
-     *     The hashtags
+     * @return The hashtags
      */
     public List<Hashtag_> getHashtags() {
         return hashtags;
     }
 
     /**
-     * 
-     * @param hashtags
-     *     The hashtags
+     * @param hashtags The hashtags
      */
     public void setHashtags(List<Hashtag_> hashtags) {
         this.hashtags = hashtags;
     }
 
-    /**
-     * 
-     * @return
-     *     The symbols
-     */
-    public List<Object> getSymbols() {
-        return symbols;
-    }
 
     /**
-     * 
-     * @param symbols
-     *     The symbols
-     */
-    public void setSymbols(List<Object> symbols) {
-        this.symbols = symbols;
-    }
-
-    /**
-     * 
-     * @return
-     *     The userMentions
-     */
-    public List<Object> getUserMentions() {
-        return userMentions;
-    }
-
-    /**
-     * 
-     * @param userMentions
-     *     The user_mentions
-     */
-    public void setUserMentions(List<Object> userMentions) {
-        this.userMentions = userMentions;
-    }
-
-    /**
-     * 
-     * @return
-     *     The urls
+     * @return The urls
      */
     public List<Url_____> getUrls() {
         return urls;
     }
 
     /**
-     * 
-     * @param urls
-     *     The urls
+     * @param urls The urls
      */
     public void setUrls(List<Url_____> urls) {
         this.urls = urls;
     }
 
     /**
-     * 
-     * @return
-     *     The media
+     * @return The media
      */
     public List<Medium____> getMedia() {
         return media;
     }
 
     /**
-     * 
-     * @param media
-     *     The media
+     * @param media The media
      */
     public void setMedia(List<Medium____> media) {
         this.media = media;
