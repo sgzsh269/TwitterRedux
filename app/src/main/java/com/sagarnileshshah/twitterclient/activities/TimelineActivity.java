@@ -146,10 +146,9 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
         switch (item.getItemId()) {
             case R.id.menu_logout:
                 mTwitterClient.clearAccessToken();
-                Intent intent = new Intent(this, LoginActivity.class);
                 saveTweetsToDB(mTweets);
+                Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
-                finish();
                 return true;
             case R.id.menu_compose:
                 renderComposeFragment();
@@ -168,6 +167,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
                 loadTweets(response, 0);
                 if (mTweets.size() > 0) {
                     mTwitterSinceId = mTweets.get(0).getRemoteId();
+                    saveTweetsToDB(mTweets);
                 }
 
                 swipeContainer.setRefreshing(false);

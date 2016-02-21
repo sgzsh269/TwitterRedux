@@ -40,7 +40,7 @@ public class Tweet extends Model {
     @Expose
     public String idStr;
 
-    @Column
+    @Column(length=150)
     @SerializedName("text")
     @Expose
     public String text;
