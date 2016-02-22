@@ -12,10 +12,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.codepath.apps.twitterclient.R;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.malmstein.fenster.controller.SimpleMediaFensterPlayerController;
+import com.malmstein.fenster.view.FensterVideoView;
 import com.sagarnileshshah.twitterclient.activities.TweetDetailActivity;
 import com.sagarnileshshah.twitterclient.models.Tweet;
 import com.sagarnileshshah.twitterclient.utils.Utils;
-import com.yqritc.scalablevideoview.ScalableVideoView;
 
 import org.parceler.Parcels;
 
@@ -63,8 +64,11 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         @Bind(R.id.ivIconVideo)
         ImageView ivIconVideo;
 
-        @Bind(R.id.svvVideo)
-        ScalableVideoView svvVideo;
+        @Bind(R.id.fvvVideo)
+        FensterVideoView fvvVideo;
+
+        @Bind(R.id.mfpcVideo)
+        SimpleMediaFensterPlayerController mfpcVideo;
 
         public ViewHolderCommon(View itemView) {
             super(itemView);
@@ -226,7 +230,7 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             viewHolder.tvRetweets.setVisibility(View.GONE);
         }
 
-        Utils.unwrapAndRenderTweetTextLinks(mContext, tweet, viewHolder.ivMedia, viewHolder.svvVideo, viewHolder.ivIconVideo, viewHolder.tvText);
+        Utils.unwrapAndRenderTweetTextLinks(mContext, tweet, viewHolder.ivMedia, viewHolder.fvvVideo, viewHolder.mfpcVideo, viewHolder.ivIconVideo, viewHolder.tvText);
 
     }
 

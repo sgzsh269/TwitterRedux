@@ -16,11 +16,12 @@ import com.bumptech.glide.Glide;
 import com.codepath.apps.twitterclient.R;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.malmstein.fenster.controller.SimpleMediaFensterPlayerController;
+import com.malmstein.fenster.view.FensterVideoView;
 import com.sagarnileshshah.twitterclient.TwitterApplication;
 import com.sagarnileshshah.twitterclient.clients.TwitterClient;
 import com.sagarnileshshah.twitterclient.models.Tweet;
 import com.sagarnileshshah.twitterclient.utils.Utils;
-import com.yqritc.scalablevideoview.ScalableVideoView;
 
 import org.apache.http.Header;
 import org.joda.time.DateTime;
@@ -92,8 +93,11 @@ public class TweetDetailActivity extends AppCompatActivity {
     @Bind(R.id.tvRetweetUser)
     TextView tvRetweetUser;
 
-    @Bind(R.id.svvVideo)
-    ScalableVideoView svvVideo;
+    @Bind(R.id.fvvVideo)
+    FensterVideoView fvvVideo;
+
+    @Bind(R.id.mfpcVideo)
+    SimpleMediaFensterPlayerController mfpcVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,7 +139,7 @@ public class TweetDetailActivity extends AppCompatActivity {
             tvReplyPlaceholder.setText("Reply to " + tweet.getUser().getName());
         }
 
-        Utils.unwrapAndRenderTweetTextLinks(this, tweet, ivMedia, svvVideo, ivIconVideo, tvText);
+        Utils.unwrapAndRenderTweetTextLinks(this, tweet, ivMedia, fvvVideo, mfpcVideo, ivIconVideo, tvText);
 
         DateTime createdAt = new DateTime(tweet.getCreatedAt());
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mm a - dd MMM yy");

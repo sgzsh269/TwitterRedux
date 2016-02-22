@@ -134,14 +134,23 @@
             android:scaleType="fitCenter"
             android:visibility="gone" />
 
-        <com.yqritc.scalablevideoview.ScalableVideoView
-            android:id="@+id/svvVideo"
+        <com.malmstein.fenster.view.FensterVideoView
+            android:id="@+id/fvvVideo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:keepScreenOn="true"
+            android:fitsSystemWindows="true"
+            android:visibility="gone"/>
+
+        <com.malmstein.fenster.controller.SimpleMediaFensterPlayerController
+            android:id="@+id/mfpcVideo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
-            app:scalableType="fitCenter">
+            android:layout_alignParentBottom="true"
+            android:animateLayoutChanges="false"
+            android:fitsSystemWindows="true"
+            android:visibility="gone"/>
 
-        </com.yqritc.scalablevideoview.ScalableVideoView>
 
         <ImageView
             android:id="@+id/ivIconVideo"

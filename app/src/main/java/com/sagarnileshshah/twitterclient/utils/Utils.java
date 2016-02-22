@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -18,10 +17,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.twitterclient.R;
+import com.malmstein.fenster.controller.MediaFensterPlayerController;
+import com.malmstein.fenster.controller.SimpleMediaFensterPlayerController;
+import com.malmstein.fenster.view.FensterVideoView;
 import com.sagarnileshshah.twitterclient.models.Medium______;
 import com.sagarnileshshah.twitterclient.models.Tweet;
 import com.sagarnileshshah.twitterclient.models.Url_____;
-import com.yqritc.scalablevideoview.ScalableVideoView;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -65,7 +66,7 @@ public class Utils {
         return elapsed;
     }
 
-    public static void unwrapAndRenderTweetTextLinks(final Context context, final Tweet tweet, ImageView mediaImage, final ScalableVideoView scalableVideoView, final ImageView iconImage, TextView textView) {
+    public static void unwrapAndRenderTweetTextLinks(final Context context, final Tweet tweet, ImageView mediaImage, final FensterVideoView fensterVideoView, final SimpleMediaFensterPlayerController mediaFensterPlayerController, final ImageView iconImage, TextView textView) {
         String text = tweet.getText();
         mediaImage.setImageResource(0);
 
@@ -90,55 +91,52 @@ public class Utils {
             iconImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    scalableVideoView.prepareAsync(new MediaPlayer.OnPreparedListener() {
-
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            mp.start();
-                            scalableVideoView.setVisibility(View.VISIBLE);
-                            iconImage.setVisibility(View.GONE);
-                            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                                @Override
-                                public void onCompletion(MediaPlayer mp) {
-                                    iconImage.setVisibility(View.VISIBLE);
-                                }
-                            });
-                        }
-                    });
+                    fensterVideoView.setVisibility(View.VISIBLE);
+                    fensterVideoView.start();
+                    //fensterVideoView.setMediaController(mediaFensterPlayerController);
+                    //mediaFensterPlayerController.setVisibility(View.VISIBLE);
+                    iconImage.setVisibility(View.GONE);
                 }
             });
 
-            scalableVideoView.setOnClickListener(new View.OnClickListener() {
+            fensterVideoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (scalableVideoView != null) {
-                        if (scalableVideoView.isPlaying()) {
-                            scalableVideoView.stop();
+                    if (fensterVideoView != null) {
+                        if (fensterVideoView.isPlaying()) {
+                            fensterVideoView.pause();
                             iconImage.setVisibility(View.VISIBLE);
+                        } else {
+                            iconImage.setVisibility(View.GONE);
+                            fensterVideoView.resume();
                         }
                     }
+                }
+            });
+
+            fensterVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    iconImage.setVisibility(View.VISIBLE);
+                    fensterVideoView.setVisibility(View.GONE);
                 }
             });
 
             if (type.equals("video") || type.equals("animated_gif")) {
                 iconImage.setVisibility(View.VISIBLE);
                 ViewGroup.LayoutParams mediaImageLayoutParams = mediaImage.getLayoutParams();
-                scalableVideoView.setLayoutParams(mediaImageLayoutParams);
+                fensterVideoView.setLayoutParams(mediaImageLayoutParams);
                 String videoUrl = tweet.getExtendedEntities().getMedia().get(0).getVideoInfo().getVariants().get(0).getUrl();
-                try {
-                    scalableVideoView.setDataSource(context, Uri.parse(videoUrl));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
+                fensterVideoView.setVideo(videoUrl, MediaFensterPlayerController.DEFAULT_VIDEO_START);
 
             } else {
                 iconImage.setVisibility(View.GONE);
-                scalableVideoView.setVisibility(View.GONE);
+                fensterVideoView.setVisibility(View.GONE);
             }
         } else {
             mediaImage.setVisibility(View.GONE);
-            scalableVideoView.setVisibility(View.GONE);
+            fensterVideoView.setVisibility(View.GONE);
             iconImage.setVisibility(View.GONE);
         }
 

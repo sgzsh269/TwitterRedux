@@ -49,4 +49,6 @@ dependencies {
     compile 'com.makeramen:roundedimageview:2.2.1'
     compile 'joda-time:joda-time:2.9.2'
     compile 'com.yqritc:android-scalablevideoview:1.0.3'
+    compile 'com.malmstein:fenster:0.0.2'
+
 }
