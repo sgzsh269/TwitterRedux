@@ -56,9 +56,14 @@ public class Tweet extends Model {
     @Expose
     public User user;
 
+    @Column(name="retweeted_tweet", onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
+    public Tweet retweeted_tweet;
+
     @SerializedName("retweeted_status")
     @Expose
     public Tweet retweetedStatus;
+
+
     @SerializedName("is_quote_status")
     @Expose
     public Boolean isQuoteStatus;
@@ -76,7 +81,6 @@ public class Tweet extends Model {
     @SerializedName("entities")
     @Expose
     public Entities___ entities;
-
 
     @SerializedName("extended_entities")
     @Expose
@@ -125,6 +129,13 @@ public class Tweet extends Model {
                     medium.getVideoInfo().populateVariantsFromDB();
                 }
             }
+        }
+    }
+
+    public void populateRetweetFromDB(){
+        List<Tweet> retweet = getMany(Tweet.class, "retweeted_tweet");
+        if (retweet.size() > 0){
+            this.retweetedStatus = retweet.get(0);
         }
     }
 

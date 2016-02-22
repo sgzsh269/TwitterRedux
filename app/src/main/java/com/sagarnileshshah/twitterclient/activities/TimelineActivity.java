@@ -245,42 +245,53 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
 
         for (Tweet tweet : tweets) {
             tweet.save();
-            User user = tweet.getUser();
-            user.tweet = tweet;
-            user.save();
+            saveToDBHelper(tweet);
 
-            Entities___ entities = tweet.getEntities();
-            entities.tweet = tweet;
-            entities.save();
+            Tweet retweetStatus = tweet.getRetweetedStatus();
+            if (retweetStatus != null) {
+                retweetStatus.retweeted_tweet = tweet;
+                retweetStatus.save();
 
-            for (Url_____ url : entities.getUrls()) {
-                url.entities = entities;
-                url.save();
+                saveToDBHelper(retweetStatus);
             }
+        }
+    }
 
-            ExtendedEntities_ extendedEntities = tweet.getExtendedEntities();
-            if (extendedEntities != null) {
-                extendedEntities.tweet = tweet;
-                extendedEntities.save();
+    private void saveToDBHelper(Tweet tweet) {
+        User user = tweet.getUser();
+        user.tweet = tweet;
+        user.save();
 
-                for (Medium______ medium : extendedEntities.getMedia()) {
-                    medium.extendedentities = extendedEntities;
-                    medium.save();
+        Entities___ entities = tweet.getEntities();
+        entities.tweet = tweet;
+        entities.save();
 
-                    VideoInfo videoInfo = medium.getVideoInfo();
-                    if (videoInfo != null) {
-                        videoInfo.medium = medium;
-                        videoInfo.save();
 
-                        for (Variant variant : videoInfo.getVariants()) {
-                            variant.videoInfo = videoInfo;
-                            variant.save();
-                        }
+        for (Url_____ url : entities.getUrls()) {
+            url.entities = entities;
+            url.save();
+        }
+
+        ExtendedEntities_ extendedEntities = tweet.getExtendedEntities();
+        if (extendedEntities != null) {
+            extendedEntities.tweet = tweet;
+            extendedEntities.save();
+
+            for (Medium______ medium : extendedEntities.getMedia()) {
+                medium.extendedentities = extendedEntities;
+                medium.save();
+
+                VideoInfo videoInfo = medium.getVideoInfo();
+                if (videoInfo != null) {
+                    videoInfo.medium = medium;
+                    videoInfo.save();
+
+                    for (Variant variant : videoInfo.getVariants()) {
+                        variant.videoInfo = videoInfo;
+                        variant.save();
                     }
                 }
             }
-
-
         }
     }
 
@@ -290,19 +301,17 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
             tweet.populateUserFromDB();
             tweet.populateEntitiesFromDB();
             tweet.populateExtendedEntitiesFromDB();
+            tweet.populateRetweetFromDB();
+            if (tweet.retweetedStatus != null) {
+                tweet.retweetedStatus.populateUserFromDB();
+                tweet.retweetedStatus.populateEntitiesFromDB();
+                tweet.retweetedStatus.populateExtendedEntitiesFromDB();
+            }
         }
         mTweets.addAll(tweets);
         mTweetsRecyclerViewAdapter.notifyItemRangeInserted(0, tweets.size());
     }
 
-    public void loadOneTweetFromDB() {
-        Tweet tweet = Tweet.getOneTweetFromDB();
-        tweet.populateUserFromDB();
-        tweet.populateEntitiesFromDB();
-        tweet.populateExtendedEntitiesFromDB();
-        mTweets.add(tweet);
-        mTweetsRecyclerViewAdapter.notifyItemInserted(0);
-    }
 
     public void renderComposeFragment() {
         FragmentManager fm = getSupportFragmentManager();
