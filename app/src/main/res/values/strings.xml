@@ -12,6 +12,7 @@
     <string name="logout">Log out</string>
     <string name="whatshappening">What\'s happening?</string>
     <string name="compose">Compose</string>
+    <string name="offline_mode">Offline Mode</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

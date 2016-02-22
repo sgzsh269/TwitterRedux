@@ -150,6 +150,7 @@ public class ComposeFragment extends DialogFragment {
             tvReplyTo.setVisibility(View.VISIBLE);
             tvReplyTo.setText("In reply to " + mTweet.getUser().getName());
             etTweet.setText("@" + mTweet.getUser().getScreenName() + " ");
+            etTweet.requestFocus();
         }
 
 

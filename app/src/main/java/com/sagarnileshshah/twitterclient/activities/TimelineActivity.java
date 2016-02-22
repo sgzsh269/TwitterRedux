@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activeandroid.ActiveAndroid;
@@ -59,6 +60,9 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
 
     @Bind(R.id.swipeContainer)
     SwipeRefreshLayout swipeContainer;
+
+    @Bind(R.id.tvOfflineMode)
+    TextView tvOfflineMode;
 
     private static TwitterClient mTwitterClient;
     private static TweetsRecyclerViewAdapter mTweetsRecyclerViewAdapter;
@@ -126,7 +130,9 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
 
         if (!Utils.isNetworkAvailable(this) || !Utils.isOnline(this)) {
             loadTweetsFromDB();
+            tvOfflineMode.setVisibility(View.VISIBLE);
         } else {
+            tvOfflineMode.setVisibility(View.GONE);
             getNewTweets();
 
         }
@@ -145,7 +151,6 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
         switch (item.getItemId()) {
             case R.id.menu_logout:
                 mTwitterClient.clearAccessToken();
-                saveTweetsToDB(mTweets);
                 Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
                 return true;
@@ -172,6 +177,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
                 loadTweets(response, 0);
                 if (mTweets.size() > 0) {
                     mTwitterSinceId = mTweets.get(0).getRemoteId();
+                    clearDB();
                     saveTweetsToDB(mTweets);
                 }
 
@@ -262,7 +268,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
         mTweetsRecyclerViewAdapter.notifyItemRangeInserted(positionStart, tweets.size());
     }
 
-    public void saveTweetsToDB(List<Tweet> tweets) {
+    public void clearDB(){
         try {
             ApplicationInfo ai = getPackageManager().getApplicationInfo(this.getPackageName(), PackageManager.GET_META_DATA);
             Bundle bundle = ai.metaData;
@@ -271,11 +277,14 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
             this.deleteDatabase(dbName);
             Configuration dbConfiguration = new Configuration.Builder(this).setDatabaseName(dbName).create();
             ActiveAndroid.initialize(dbConfiguration);
+            ActiveAndroid.setLoggingEnabled(true);
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+    }
 
+    public void saveTweetsToDB(List<Tweet> tweets) {
         for (Tweet tweet : tweets) {
             tweet.save();
             saveToDBHelper(tweet);
