@@ -14,6 +14,7 @@ import com.codepath.apps.twitterclient.R;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.malmstein.fenster.controller.SimpleMediaFensterPlayerController;
 import com.malmstein.fenster.view.FensterVideoView;
+import com.sagarnileshshah.twitterclient.activities.TimelineActivity;
 import com.sagarnileshshah.twitterclient.activities.TweetDetailActivity;
 import com.sagarnileshshah.twitterclient.models.Tweet;
 import com.sagarnileshshah.twitterclient.utils.Utils;
@@ -69,6 +70,15 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         @Bind(R.id.mfpcVideo)
         SimpleMediaFensterPlayerController mfpcVideo;
+
+        @Bind(R.id.ivIconReply)
+        ImageView ivIconReply;
+
+        @Bind(R.id.ivIconRetweet)
+        ImageView ivIconRetweet;
+
+        @Bind(R.id.ivIconLike)
+        ImageView ivIconLike;
 
         public ViewHolderCommon(View itemView) {
             super(itemView);
@@ -204,7 +214,7 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
 
-    private void configureViewHolderCommon(ViewHolderCommon viewHolder, Tweet tweet) {
+    private void configureViewHolderCommon(ViewHolderCommon viewHolder, final Tweet tweet) {
 
         if (tweet.getUser() != null) {
             viewHolder.tvUserName.setText(tweet.getUser().getName());
@@ -229,6 +239,13 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         } else {
             viewHolder.tvRetweets.setVisibility(View.GONE);
         }
+
+        viewHolder.ivIconReply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((TimelineActivity)mContext).renderReplyFragment(tweet);
+            }
+        });
 
         Utils.unwrapAndRenderTweetTextLinks(mContext, tweet, viewHolder.ivMedia, viewHolder.fvvVideo, viewHolder.mfpcVideo, viewHolder.ivIconVideo, viewHolder.tvText);
 

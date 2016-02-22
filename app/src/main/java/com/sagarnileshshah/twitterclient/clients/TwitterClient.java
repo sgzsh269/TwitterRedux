@@ -48,9 +48,7 @@ public class TwitterClient extends OAuthBaseClient {
 		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
 			return false;
 		}
-		//TODO
-		// String apiUrl = getApiUrl("statuses/home_timeline.json");
-		String apiUrl = getApiUrl("statuses/user_timeline.json");
+		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
 		params.put("count", 10);
 		params.put("since_id", sinceId);
@@ -62,9 +60,7 @@ public class TwitterClient extends OAuthBaseClient {
 		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
 			return false;
 		}
-		//TODO
-		//String apiUrl = getApiUrl("statuses/home_timeline.json");
-		String apiUrl = getApiUrl("statuses/user_timeline.json");
+		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
 		params.put("count", 10);
 		params.put("max_id", maxId - 1);
@@ -82,6 +78,15 @@ public class TwitterClient extends OAuthBaseClient {
 		if(tweetId != -1)
 			params.put("in_reply_to_status_id", tweetId);
 		client.post(apiUrl, params, handler);
+		return true;
+	}
+
+	public boolean getUserTimeline(Activity activity, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/user_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("count", 10);
+		params.put("since_id", 1);
+		client.get(apiUrl, params, handler);
 		return true;
 	}
 

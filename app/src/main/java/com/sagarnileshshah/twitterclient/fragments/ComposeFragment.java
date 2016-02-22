@@ -17,7 +17,10 @@ import android.widget.TextView;
 
 import com.codepath.apps.twitterclient.R;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.sagarnileshshah.twitterclient.models.Tweet;
 import com.sagarnileshshah.twitterclient.utils.DeviceDimensionsHelper;
+
+import org.parceler.Parcels;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -41,6 +44,13 @@ public class ComposeFragment extends DialogFragment {
     @Bind(R.id.tvCharacterCount)
     TextView tvCharacterCount;
 
+    @Bind(R.id.ivIconReply)
+    ImageView ivIconReply;
+
+    @Bind(R.id.tvReplyTo)
+    TextView tvReplyTo;
+
+    Tweet mTweet;
 
     private OnFragmentInteractionListener mActivity;
 
@@ -50,7 +60,14 @@ public class ComposeFragment extends DialogFragment {
 
     public static ComposeFragment newInstance() {
         ComposeFragment fragment = new ComposeFragment();
-        Bundle args = new Bundle();
+        return fragment;
+    }
+
+    public static ComposeFragment newInstance(Tweet tweet) {
+        ComposeFragment fragment = new ComposeFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("tweet", Parcels.wrap(tweet));
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -58,7 +75,7 @@ public class ComposeFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-
+            mTweet = Parcels.unwrap(getArguments().getParcelable("tweet"));
         }
     }
 
@@ -113,13 +130,27 @@ public class ComposeFragment extends DialogFragment {
                     btnTweet.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mActivity.postMessage(-1, etTweet.getText().toString());
+
+                            if(mTweet == null) {
+                                mActivity.postMessage(-1, etTweet.getText().toString());
+                            } else {
+                                mActivity.postMessage(mTweet.getRemoteId(), etTweet.getText().toString());
+                            }
                             dismiss();
                         }
                     });
                 }
             }
         });
+
+        etTweet.requestFocus();
+
+        if(mTweet != null){
+            ivIconReply.setVisibility(View.VISIBLE);
+            tvReplyTo.setVisibility(View.VISIBLE);
+            tvReplyTo.setText("In reply to " + mTweet.getUser().getName());
+            etTweet.setText("@" + mTweet.getUser().getScreenName() + " ");
+        }
 
 
     }

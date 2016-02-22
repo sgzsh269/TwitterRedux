@@ -69,7 +69,6 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
 
     private static HashSet<Long> mTweetIdsHashSet;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,6 +152,12 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
             case R.id.menu_compose:
                 renderComposeFragment();
                 return true;
+            case R.id.menu_user_timeline:
+                getUserTimeline();
+                return true;
+            case R.id.menu_home_timeline:
+                getHomeTimeline();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -177,6 +182,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e(this.toString(), String.valueOf(statusCode));
                 swipeContainer.setRefreshing(false);
+                Toast.makeText(TimelineActivity.this, "Sorry, unable to get Tweets. Please try again later.", Toast.LENGTH_LONG).show();
             }
         }, mTwitterSinceId);
 
@@ -201,9 +207,36 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e(this.toString(), String.valueOf(statusCode));
+                Toast.makeText(TimelineActivity.this, "Sorry, unable to get Tweets. Please try again later.", Toast.LENGTH_LONG).show();
             }
         }, mTwitterMaxId);
 
+    }
+
+    private void getUserTimeline(){
+        mTwitterClient.getUserTimeline(this, new TextHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                mTweetsRecyclerViewAdapter.notifyItemRangeRemoved(0, mTweets.size());
+                mTweets.clear();
+                mTweetIdsHashSet.clear();
+                loadTweets(responseString, 0);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Toast.makeText(TimelineActivity.this, "Sorry, unable to get Tweets. Please try again later.", Toast.LENGTH_LONG).show();
+            }
+
+
+        });
+    }
+
+    private void getHomeTimeline(){
+        mTweetsRecyclerViewAdapter.notifyItemRangeRemoved(0, mTweets.size());
+        mTweets.clear();
+        mTweetIdsHashSet.clear();
+        getNewTweets();
     }
 
     public static void loadTweets(String response, int positionStart) {
@@ -319,19 +352,31 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
         composeFragment.show(fm, "compose");
     }
 
+    public void renderReplyFragment(Tweet tweet) {
+        FragmentManager fm = getSupportFragmentManager();
+        ComposeFragment composeFragment = ComposeFragment.newInstance(tweet);
+        composeFragment.show(fm, "reply");
+    }
+
     @Override
     public void postMessage(long id, String message) {
+        final String name;
+        if(id == -1){
+            name = "Tweet";
+        } else {
+            name = "Reply";
+        }
         mTwitterClient.postMessage(this, new TextHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String response) {
-                Toast.makeText(TimelineActivity.this, "Tweet sent Successfully!", Toast.LENGTH_LONG).show();
+                Toast.makeText(TimelineActivity.this, name + " sent Successfully!", Toast.LENGTH_LONG).show();
                 response = "[" + response + "]";
                 loadTweets(response, 0);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Toast.makeText(TimelineActivity.this, "Sorry, Tweet wasn't sent. Please try again.", Toast.LENGTH_LONG).show();
+                Toast.makeText(TimelineActivity.this, "Sorry, " + name + " wasn't sent. Please try again.", Toast.LENGTH_LONG).show();
             }
         }, id, message);
     }

@@ -32,12 +32,33 @@
         android:layout_below="@+id/ivIconClose"
         android:background="@color/colorGrey" />
 
+    <ImageView
+        android:id="@+id/ivIconReply"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_below="@id/ivIconClose"
+        android:src="@drawable/ic_arrow_downward"
+        android:layout_margin="8dp"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/tvReplyTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/ivIconReply"
+        android:layout_toEndOf="@id/ivIconReply"
+        android:layout_below="@id/ivIconClose"
+        android:layout_margin="8dp"
+        android:textColor="@color/colorGrey"
+        android:visibility="gone"/>
+
     <EditText
         android:id="@+id/etTweet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:layout_below="@+id/ivIconClose"
+        android:paddingTop="8dp"
+        android:layout_below="@+id/ivIconReply"
         android:inputType="textMultiLine"
         android:textStyle="normal"
         android:textSize="16sp"

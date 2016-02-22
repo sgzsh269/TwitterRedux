@@ -1,6 +1,7 @@
 package com.sagarnileshshah.twitterclient.activities;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -20,6 +21,7 @@ import com.malmstein.fenster.controller.SimpleMediaFensterPlayerController;
 import com.malmstein.fenster.view.FensterVideoView;
 import com.sagarnileshshah.twitterclient.TwitterApplication;
 import com.sagarnileshshah.twitterclient.clients.TwitterClient;
+import com.sagarnileshshah.twitterclient.fragments.ComposeFragment;
 import com.sagarnileshshah.twitterclient.models.Tweet;
 import com.sagarnileshshah.twitterclient.utils.Utils;
 
@@ -32,7 +34,7 @@ import org.parceler.Parcels;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class TweetDetailActivity extends AppCompatActivity {
+public class TweetDetailActivity extends AppCompatActivity implements ComposeFragment.OnFragmentInteractionListener {
 
     TwitterClient mTwitterClient;
 
@@ -98,6 +100,18 @@ public class TweetDetailActivity extends AppCompatActivity {
 
     @Bind(R.id.mfpcVideo)
     SimpleMediaFensterPlayerController mfpcVideo;
+
+    @Bind(R.id.ivIconReply)
+    ImageView ivIconReply;
+
+    @Bind(R.id.ivIconRetweet)
+    ImageView ivIconRetweet;
+
+    @Bind(R.id.ivIconLike)
+    ImageView ivIconLike;
+
+    @Bind(R.id.ivIconShare)
+    ImageView ivIconShare;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,26 +222,41 @@ public class TweetDetailActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             rlReplyBox.setVisibility(View.GONE);
-                            mTwitterClient.postMessage(TweetDetailActivity.this, new TextHttpResponseHandler() {
-                                @Override
-                                public void onSuccess(int statusCode, Header[] headers, String response) {
-                                    response = "[" + response + "]";
-                                    TimelineActivity.loadTweets(response, 0);
-                                    Toast.makeText(TweetDetailActivity.this, "Reply sent Successfully!", Toast.LENGTH_LONG).show();
-                                }
-
-                                @Override
-                                public void onFailure(int statusCode, Header[] headers, String response, Throwable error) {
-                                    Toast.makeText(TweetDetailActivity.this, "Sorry, Reply wasn't updated. Please try again.", Toast.LENGTH_LONG).show();
-                                }
-                            }, tweet.getRemoteId(), etReply.getText().toString());
+                            postMessage(tweet.getRemoteId(), etReply.getText().toString());
                         }
                     });
                 }
             }
         });
 
-
+        ivIconReply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                renderReplyFragment(tweet);
+            }
+        });
     }
 
+    public void renderReplyFragment(Tweet tweet) {
+        FragmentManager fm = getSupportFragmentManager();
+        ComposeFragment composeFragment = ComposeFragment.newInstance(tweet);
+        composeFragment.show(fm, "reply");
+    }
+
+    @Override
+    public void postMessage(long id, String message) {
+        mTwitterClient.postMessage(TweetDetailActivity.this, new TextHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String response) {
+                response = "[" + response + "]";
+                TimelineActivity.loadTweets(response, 0);
+                Toast.makeText(TweetDetailActivity.this, "Reply sent Successfully!", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String response, Throwable error) {
+                Toast.makeText(TweetDetailActivity.this, "Sorry, Reply wasn't sent. Please try again.", Toast.LENGTH_LONG).show();
+            }
+        }, id, message);
+    }
 }

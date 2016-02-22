@@ -34,7 +34,7 @@ public class Tweet extends Model {
     @Column
     @SerializedName("id")
     @Expose
-    public Long id;
+    public Long remoteId;
 
     @SerializedName("id_str")
     @Expose
@@ -143,6 +143,7 @@ public class Tweet extends Model {
     public static List<Tweet> getAllTweetsFromDB() {
         return new Select()
                 .from(Tweet.class)
+                .where("retweeted_tweet is null")
                 .execute();
     }
 
@@ -172,14 +173,14 @@ public class Tweet extends Model {
      * @return The id
      */
     public Long getRemoteId() {
-        return id;
+        return remoteId;
     }
 
     /**
      * @param id The id
      */
-    public void setId(Long id) {
-        this.id = id;
+    public void setRemoteId(Long remoteId) {
+        this.remoteId = remoteId;
     }
 
     /**
