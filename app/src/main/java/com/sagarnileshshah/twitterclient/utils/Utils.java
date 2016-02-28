@@ -140,11 +140,11 @@ public class Utils {
             iconImage.setVisibility(View.GONE);
         }
 
-        SpannableString spannableString = formatTweetText(context, text);
+        SpannableString spannableString = formatTwitterText(context, text);
         textView.setText(spannableString);
     }
 
-    public static SpannableString formatTweetText(Context context, String text) {
+    public static SpannableString formatTwitterText(Context context, String text) {
         SpannableString captionSpannableString = new SpannableString(text);
         Pattern pattern = Pattern.compile("[#|@].+?\\b");
         Matcher matcher = pattern.matcher(text);

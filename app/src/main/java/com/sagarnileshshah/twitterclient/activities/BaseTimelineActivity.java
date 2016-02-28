@@ -58,4 +58,5 @@ public abstract class BaseTimelineActivity extends AppCompatActivity implements 
         }, id, message);
     }
 
+
 }

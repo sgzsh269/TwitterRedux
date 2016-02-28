@@ -19,6 +19,7 @@ import com.loopj.android.http.TextHttpResponseHandler;
 import com.sagarnileshshah.twitterclient.TwitterApplication;
 import com.sagarnileshshah.twitterclient.adapters.ProfileFragmentPagerAdapter;
 import com.sagarnileshshah.twitterclient.fragments.TimelineFragment;
+import com.sagarnileshshah.twitterclient.models.user.Url__;
 import com.sagarnileshshah.twitterclient.models.user.User;
 import com.sagarnileshshah.twitterclient.utils.Utils;
 
@@ -138,13 +139,14 @@ public class UserProfileActivity extends BaseTimelineActivity {
 
 
     private void render(User user) {
-        Glide.with(this).load(user.getProfileBannerUrl()).into(ivBanner);
-        Glide.with(this).load(user.getProfileImageUrl()).into(ivUserProfileImage);
+        Glide.with(this).load(user.getProfileBannerUrl()).error(R.drawable.shape_banner_placeholder).placeholder(R.drawable.shape_banner_placeholder).into(ivBanner);
+        Glide.with(this).load(user.getProfileImageUrl()).error(R.drawable.photo_placeholder).placeholder(R.drawable.photo_placeholder).dontAnimate().into(ivUserProfileImage);
         tvUserName.setText(user.getName());
         tvScreenName.setText("@" + user.getScreenName());
 
+        String description = "";
         if (user.getDescription() != null) {
-            tvDescription.setText(user.getDescription());
+            description = user.getDescription();
         } else {
             tvDescription.setVisibility(View.GONE);
         }
@@ -160,9 +162,20 @@ public class UserProfileActivity extends BaseTimelineActivity {
 
         if (user.getEntities() != null && user.getEntities().getUrl() != null && user.getEntities().getUrl().getUrls().size() > 0) {
             tvDisplayUrl.setText(" " + user.getEntities().getUrl().getUrls().get(0).getDisplayUrl());
+
         } else {
             tvDisplayUrl.setVisibility(View.GONE);
         }
+
+        if(user.getStatus() != null && user.getStatus().getEntities() != null && user.getStatus().getEntities().getUrls() != null){
+            for (Url__ url : user.getStatus().getEntities().getUrls()) {
+                String wrapperUrl = url.getUrl();
+                String displayUrl = url.getDisplayUrl();
+                description = description.replace(wrapperUrl, displayUrl);
+            }
+        }
+
+        tvDescription.setText(Utils.formatTwitterText(this, description));
 
         tvFollowingCount.setText(Utils.formatNumber(user.getFriendsCount()));
         tvFollowersCount.setText(Utils.formatNumber(user.getFollowersCount()));

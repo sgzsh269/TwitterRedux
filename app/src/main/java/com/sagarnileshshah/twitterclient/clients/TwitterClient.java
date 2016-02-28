@@ -96,4 +96,48 @@ public class TwitterClient extends OAuthBaseClient {
 		client.get(apiUrl, params, handler);
 		return true;
 	}
+
+	public boolean postRetweet(Activity activity, AsyncHttpResponseHandler handler, long tweetId){
+		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
+			return false;
+		}
+		RequestParams params = new RequestParams();
+		params.put("id", tweetId);
+		String apiUrl = getApiUrl("statuses/retweet/" + tweetId + ".json");
+		client.post(apiUrl, params, handler);
+		return true;
+	}
+
+	public boolean postUnRetweet(Activity activity, AsyncHttpResponseHandler handler, long tweetId){
+		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
+			return false;
+		}
+		RequestParams params = new RequestParams();
+		params.put("id", tweetId);
+		String apiUrl = getApiUrl("statuses/unretweet/" + tweetId + ".json");
+		client.post(apiUrl, params, handler);
+		return true;
+	}
+
+	public boolean postLike(Activity activity, AsyncHttpResponseHandler handler, long tweetId){
+		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
+			return false;
+		}
+		RequestParams params = new RequestParams();
+		params.put("id", tweetId);
+		String apiUrl = getApiUrl("favorites/create.json");
+		client.post(apiUrl, params, handler);
+		return true;
+	}
+
+	public boolean postUnlike(Activity activity, AsyncHttpResponseHandler handler, long tweetId){
+		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
+			return false;
+		}
+		RequestParams params = new RequestParams();
+		params.put("id", tweetId);
+		String apiUrl = getApiUrl("favorites/destroy.json");
+		client.post(apiUrl, params, handler);
+		return true;
+	}
 }
