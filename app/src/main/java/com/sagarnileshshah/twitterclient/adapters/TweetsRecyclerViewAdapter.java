@@ -14,9 +14,10 @@ import com.codepath.apps.twitterclient.R;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.malmstein.fenster.controller.SimpleMediaFensterPlayerController;
 import com.malmstein.fenster.view.FensterVideoView;
-import com.sagarnileshshah.twitterclient.activities.TimelineActivity;
+import com.sagarnileshshah.twitterclient.activities.BaseTimelineActivity;
 import com.sagarnileshshah.twitterclient.activities.TweetDetailActivity;
-import com.sagarnileshshah.twitterclient.models.Tweet;
+import com.sagarnileshshah.twitterclient.activities.UserProfileActivity;
+import com.sagarnileshshah.twitterclient.models.tweet.Tweet;
 import com.sagarnileshshah.twitterclient.utils.Utils;
 
 import org.parceler.Parcels;
@@ -222,6 +223,14 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             viewHolder.ivUserProfileImage.setImageResource(0);
             Glide.with(mContext).load(tweet.getUser().getProfileImageUrl().replace(".png", "_bigger.png")).error(R.drawable.photo_placeholder).placeholder(R.drawable.photo_placeholder).dontAnimate().into(viewHolder.ivUserProfileImage);
+            viewHolder.ivUserProfileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, UserProfileActivity.class);
+                    intent.putExtra("userId", tweet.getUser().getRemoteId());
+                    mContext.startActivity(intent);
+                }
+            });
         }
 
         viewHolder.tvRelativeTimestamp.setText(Utils.getFormattedRelativeTimestamp(tweet.getCreatedAt()));
@@ -243,7 +252,7 @@ public class TweetsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         viewHolder.ivIconReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((TimelineActivity)mContext).renderReplyFragment(tweet);
+                ((BaseTimelineActivity)mContext).renderReplyFragment(tweet);
             }
         });
 

@@ -12,27 +12,28 @@
         android:id="@+id/tvOfflineMode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/offline_mode"
-        android:textStyle="normal"
-        android:textColor="@android:color/white"
-        android:background="@android:color/holo_red_light"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:background="@android:color/holo_red_light"
         android:gravity="center"
-        android:visibility="gone"/>
+        android:text="@string/offline_mode"
+        android:textColor="@android:color/white"
+        android:textStyle="normal"
+        android:visibility="gone" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipeContainer"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/sliding_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvOfflineMode"
+        app:tabMode="fixed"
+        style="@style/CustomTabLayout" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tvOfflineMode">
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvTweets"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    </android.support.v4.widget.SwipeRefreshLayout>
-
+        android:layout_below="@id/sliding_tabs"
+        android:background="@android:color/white" />
 
 </RelativeLayout>

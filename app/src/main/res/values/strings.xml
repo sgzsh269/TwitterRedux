@@ -13,9 +13,13 @@
     <string name="whatshappening">What\'s happening?</string>
     <string name="compose">Compose</string>
     <string name="offline_mode">Offline Mode</string>
+    <string name="profile">Profile</string>
+    <string name="following">following</string>
+    <string name="followers">followers</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_user_profile">UserProfileActivity</string>
 
 </resources>

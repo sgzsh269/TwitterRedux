@@ -20,9 +20,9 @@ import com.codepath.apps.twitterclient.R;
 import com.malmstein.fenster.controller.MediaFensterPlayerController;
 import com.malmstein.fenster.controller.SimpleMediaFensterPlayerController;
 import com.malmstein.fenster.view.FensterVideoView;
-import com.sagarnileshshah.twitterclient.models.Medium______;
-import com.sagarnileshshah.twitterclient.models.Tweet;
-import com.sagarnileshshah.twitterclient.models.Url_____;
+import com.sagarnileshshah.twitterclient.models.tweet.Medium______;
+import com.sagarnileshshah.twitterclient.models.tweet.Tweet;
+import com.sagarnileshshah.twitterclient.models.tweet.Url_____;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -200,6 +200,20 @@ public class Utils {
             }
         });
         snackBar.setActionTextColor(Color.WHITE).show();
+    }
+
+    public static String formatNumber(long number){
+        if(number < 1000){
+            return String.valueOf(number);
+        } else if (number < 1000000){
+            float value = (float) number / 1000;
+            String formatted = String.format("%.2f", value);
+            return formatted + "K";
+        } else {
+            float value = (float) number / 1000000;
+            String formatted = String.format("%.2f", value);
+            return formatted + "M";
+        }
     }
 
 }

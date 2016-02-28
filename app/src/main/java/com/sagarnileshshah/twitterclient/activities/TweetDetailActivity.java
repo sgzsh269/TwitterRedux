@@ -22,7 +22,7 @@ import com.malmstein.fenster.view.FensterVideoView;
 import com.sagarnileshshah.twitterclient.TwitterApplication;
 import com.sagarnileshshah.twitterclient.clients.TwitterClient;
 import com.sagarnileshshah.twitterclient.fragments.ComposeFragment;
-import com.sagarnileshshah.twitterclient.models.Tweet;
+import com.sagarnileshshah.twitterclient.models.tweet.Tweet;
 import com.sagarnileshshah.twitterclient.utils.Utils;
 
 import org.apache.http.Header;
@@ -249,7 +249,6 @@ public class TweetDetailActivity extends AppCompatActivity implements ComposeFra
             @Override
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 response = "[" + response + "]";
-                TimelineActivity.loadTweets(response, 0);
                 Toast.makeText(TweetDetailActivity.this, "Reply sent Successfully!", Toast.LENGTH_LONG).show();
             }
 

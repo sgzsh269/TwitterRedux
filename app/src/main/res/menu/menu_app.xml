@@ -4,14 +4,8 @@
     <item android:id="@+id/menu_logout"
         android:title="@string/logout"
         app:showAsAction="never"/>
-    <item android:id="@+id/menu_compose"
-        android:title="@string/compose"
-        android:icon="@drawable/ic_compose_blue"
-        app:showAsAction="always" />
-    <item android:id="@+id/menu_user_timeline"
-        android:title="Use User timeline"
-        app:showAsAction="never"/>
-    <item android:id="@+id/menu_home_timeline"
-        android:title="Use Home timeline"
-        app:showAsAction="never"/>
+    <item android:id="@+id/menu_user_profile"
+        android:title="@string/profile"
+        android:icon="@drawable/ic_user"
+        app:showAsAction="always"/>
 </menu>

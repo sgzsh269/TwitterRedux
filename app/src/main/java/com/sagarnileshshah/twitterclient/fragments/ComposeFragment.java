@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.codepath.apps.twitterclient.R;
 import com.makeramen.roundedimageview.RoundedImageView;
-import com.sagarnileshshah.twitterclient.models.Tweet;
+import com.sagarnileshshah.twitterclient.models.tweet.Tweet;
 import com.sagarnileshshah.twitterclient.utils.DeviceDimensionsHelper;
 
 import org.parceler.Parcels;
@@ -142,8 +142,6 @@ public class ComposeFragment extends DialogFragment {
                 }
             }
         });
-
-        etTweet.requestFocus();
 
         if(mTweet != null){
             ivIconReply.setVisibility(View.VISIBLE);
