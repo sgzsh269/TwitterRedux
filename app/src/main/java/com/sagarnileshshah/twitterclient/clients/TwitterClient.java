@@ -56,7 +56,7 @@ public class TwitterClient extends OAuthBaseClient {
 		String apiUrl = getApiUrl("statuses/" + timeline + "_timeline.json");
 		RequestParams params = new RequestParams();
 		params.put("count", 10);
-		params.put("max_id", maxId - 1);
+		params.put("max_id", maxId);
 		if(userId != -1){
 			params.put("user_id", userId);
 		}
@@ -138,6 +138,56 @@ public class TwitterClient extends OAuthBaseClient {
 		params.put("id", tweetId);
 		String apiUrl = getApiUrl("favorites/destroy.json");
 		client.post(apiUrl, params, handler);
+		return true;
+	}
+
+	public boolean getFriends(Activity activity, AsyncHttpResponseHandler handler, long userId, long nextCursorId){
+		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
+			return false;
+		}
+		RequestParams params = new RequestParams();
+		params.put("user_id", userId);
+		params.put("cursor", nextCursorId);
+		String apiUrl = getApiUrl("friends/list.json");
+		client.get(apiUrl, params, handler);
+		return true;
+	}
+
+	public boolean getFollowers(Activity activity, AsyncHttpResponseHandler handler, long userId, long nextCursorId){
+		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
+			return false;
+		}
+		RequestParams params = new RequestParams();
+		params.put("user_id", userId);
+		params.put("cursor", nextCursorId);
+		String apiUrl = getApiUrl("followers/list.json");
+		client.get(apiUrl, params, handler);
+		return true;
+	}
+
+	public boolean searchForNewerTweet(Activity activity, AsyncHttpResponseHandler handler, String searchText, long sinceId){
+		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
+			return false;
+		}
+		String apiUrl = getApiUrl("search/tweets.json");
+		RequestParams params = new RequestParams();
+		params.put("q", searchText);
+		params.put("count", 10);
+		params.put("since_id", sinceId);
+		client.get(apiUrl, params, handler);
+		return true;
+	}
+
+	public boolean searchForOlderTweet(Activity activity, AsyncHttpResponseHandler handler, String searchText, long maxId){
+		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
+			return false;
+		}
+		String apiUrl = getApiUrl("search/tweets.json");
+		RequestParams params = new RequestParams();
+		params.put("q", searchText);
+		params.put("count", 10);
+		params.put("max_id", maxId);
+		client.get(apiUrl, params, handler);
 		return true;
 	}
 }

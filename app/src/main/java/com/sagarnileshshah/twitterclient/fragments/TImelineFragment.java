@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.codepath.apps.twitterclient.R;
@@ -23,6 +24,7 @@ import com.sagarnileshshah.twitterclient.adapters.TweetsRecyclerViewAdapter;
 import com.sagarnileshshah.twitterclient.clients.TwitterClient;
 import com.sagarnileshshah.twitterclient.decorations.DividerItemDecoration;
 import com.sagarnileshshah.twitterclient.listeners.EndlessRecyclerViewScrollListener;
+import com.sagarnileshshah.twitterclient.models.tweet.Search;
 import com.sagarnileshshah.twitterclient.models.tweet.Tweet;
 import com.sagarnileshshah.twitterclient.utils.Utils;
 
@@ -32,6 +34,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -47,6 +50,9 @@ public class TimelineFragment extends Fragment {
     @Bind(R.id.swipeContainer)
     SwipeRefreshLayout swipeContainer;
 
+    @Bind(R.id.pbLoading)
+    ProgressBar pbLoading;
+
     private String mTimeline;
     private OnTimelineFragmentInteractionListener mListener;
     private Activity mActivity;
@@ -55,6 +61,9 @@ public class TimelineFragment extends Fragment {
     private ArrayList<Tweet> mTweets;
     private HashSet<Long> mTweetIdsHashSet;
     private long mUserId = -1;
+    private String mSearchText;
+    private long mSearchSinceId;
+    private long mSearchMaxId;
 
 
     private static final String TIMELINE_ARG = "timeline";
@@ -66,6 +75,11 @@ public class TimelineFragment extends Fragment {
         args.putLong(USER_ID_ARG, userId);
         TimelineFragment fragment = new TimelineFragment();
         fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static TimelineFragment newInstance() {
+        TimelineFragment fragment = new TimelineFragment();
         return fragment;
     }
 
@@ -91,9 +105,13 @@ public class TimelineFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTimeline = getArguments().getString(TIMELINE_ARG).toLowerCase();
-        if(getArguments().containsKey(USER_ID_ARG)){
-            mUserId = getArguments().getLong(USER_ID_ARG);
+        if(getArguments() != null) {
+            if (getArguments().containsKey(TIMELINE_ARG)) {
+                mTimeline = getArguments().getString(TIMELINE_ARG).toLowerCase();
+            }
+            if (getArguments().containsKey(USER_ID_ARG)) {
+                mUserId = getArguments().getLong(USER_ID_ARG);
+            }
         }
     }
 
@@ -116,21 +134,7 @@ public class TimelineFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mActivity);
         rvTweets.setLayoutManager(linearLayoutManager);
 
-        rvTweets.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
-            @Override
-            public void onLoadMore() {
-                getOldTweets();
-            }
-        });
-
         rvTweets.addItemDecoration(new DividerItemDecoration((Context) mListener, DividerItemDecoration.VERTICAL_LIST));
-
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getNewTweets();
-            }
-        });
 
         swipeContainer.setColorSchemeResources(R.color.colorPrimary,
                 R.color.colorPrimary,
@@ -138,15 +142,122 @@ public class TimelineFragment extends Fragment {
                 R.color.colorPrimary);
 
 
-        if (!Utils.isNetworkAvailable(mActivity) || !Utils.isOnline(mActivity)) {
-            //loadTweetsFromDB();
-        } else {
-            getNewTweets();
+        if (mTimeline != null) {
+            rvTweets.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+                @Override
+                public void onLoadMore() {
+                    getOldTweets();
+                }
+            });
 
+
+            swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    getNewTweets();
+                }
+            });
+
+            if (!Utils.isNetworkAvailable(mActivity) || !Utils.isOnline(mActivity)) {
+                //loadTweetsFromDB();
+            } else {
+                getNewTweets();
+            }
+        } else {
+            rvTweets.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+                @Override
+                public void onLoadMore() {
+                    searchForOlderTweets();
+                }
+            });
+
+
+            swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    searchForNewerTweets(mSearchText);
+                }
+            });
         }
     }
 
+    public void clearTweets(){
+        mTweetsRecyclerViewAdapter.notifyItemRangeRemoved(0, mTweets.size());
+        mTweets.clear();
+        mTweetIdsHashSet.clear();
+    }
+
+    public void searchForNewerTweets(String searchText) {
+        mSearchText = searchText;
+        pbLoading.setVisibility(View.VISIBLE);
+        long twitterSinceId = 1;
+
+        if (mTweets.size() > 0) {
+            twitterSinceId = mTweets.get(0).getRemoteId();
+        }
+
+        boolean requestSent = mTwitterClient.searchForNewerTweet(mActivity, new TextHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String response) {
+
+                loadSearchTweets(response, 0);
+
+                if (mTweets.size() > 0) {
+                }
+                pbLoading.setVisibility(View.INVISIBLE);
+                swipeContainer.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.e(this.toString(), "in for new");
+                Log.e(this.toString(), String.valueOf(responseString));
+                swipeContainer.setRefreshing(false);
+                Toast.makeText(mActivity, "Sorry, unable to get Tweets. Please try again later.", Toast.LENGTH_LONG).show();
+                pbLoading.setVisibility(View.INVISIBLE);
+            }
+        }, mSearchText, twitterSinceId);
+
+        if (!requestSent) {
+            swipeContainer.setRefreshing(false);
+            pbLoading.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void searchForOlderTweets() {
+        pbLoading.setVisibility(View.VISIBLE);
+        long twitterMaxId = 0;
+        if (mTweets.size() > 0) {
+            twitterMaxId = mTweets.get(mTweets.size() - 1).getRemoteId() - 1;
+        }
+
+        boolean requestSent = mTwitterClient.searchForOlderTweet(mActivity, new TextHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String response) {
+
+                loadSearchTweets(response, mTweets.size());
+                pbLoading.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.e(this.toString(), "in for old");
+                Log.e(this.toString(), String.valueOf(responseString));
+                Toast.makeText(mActivity, "Sorry, unable to get Tweets. Please try again later.", Toast.LENGTH_LONG).show();
+                pbLoading.setVisibility(View.INVISIBLE);
+            }
+        }, mSearchText, twitterMaxId);
+
+        if (!requestSent) {
+            pbLoading.setVisibility(View.INVISIBLE);
+        }
+    }
+
+
     private void getNewTweets() {
+        pbLoading.setVisibility(View.VISIBLE);
         long twitterSinceId = 1;
 
         if (mTweets.size() > 0) {
@@ -164,7 +275,7 @@ public class TimelineFragment extends Fragment {
                     //clearDB();
                     //saveTweetsToDB(mTweets);
                 }
-
+                pbLoading.setVisibility(View.INVISIBLE);
                 swipeContainer.setRefreshing(false);
             }
 
@@ -173,35 +284,44 @@ public class TimelineFragment extends Fragment {
                 Log.e(this.toString(), String.valueOf(statusCode));
                 swipeContainer.setRefreshing(false);
                 Toast.makeText(mActivity, "Sorry, unable to get Tweets. Please try again later.", Toast.LENGTH_LONG).show();
+                pbLoading.setVisibility(View.INVISIBLE);
             }
         }, twitterSinceId, mTimeline, mUserId);
 
         if (!requestSent) {
             swipeContainer.setRefreshing(false);
+            pbLoading.setVisibility(View.INVISIBLE);
         }
 
     }
 
     private void getOldTweets() {
+        pbLoading.setVisibility(View.VISIBLE);
         long twitterMaxId = 0;
         if (mTweets.size() > 0) {
             twitterMaxId = mTweets.get(mTweets.size() - 1).getRemoteId() - 1;
         }
 
-        mTwitterClient.getOldTweets(mActivity, new TextHttpResponseHandler() {
+        boolean requestSent = mTwitterClient.getOldTweets(mActivity, new TextHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, String response) {
 
                 loadTweets(response, mTweets.size());
+                pbLoading.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e(this.toString(), String.valueOf(statusCode));
                 Toast.makeText(mActivity, "Sorry, unable to get Tweets. Please try again later.", Toast.LENGTH_LONG).show();
+                pbLoading.setVisibility(View.INVISIBLE);
             }
         }, twitterMaxId, mTimeline, mUserId);
+
+        if (!requestSent) {
+            pbLoading.setVisibility(View.INVISIBLE);
+        }
 
     }
 
@@ -226,13 +346,29 @@ public class TimelineFragment extends Fragment {
         mTweetsRecyclerViewAdapter.notifyItemRangeInserted(positionStart, tweets.size());
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        reload();
+    public void loadSearchTweets(String response, int positionStart) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setDateFormat(Tweet.DATE_FORMAT);
+        Gson gson = gsonBuilder.create();
+        Search search = gson.fromJson(response, Search.class);
+        mSearchSinceId = search.getSearchMetadata().getSinceId();
+        mSearchMaxId = search.getSearchMetadata().getMaxId() - 1;
+        List<Tweet> tweets = search.getStatuses();
+        Iterator<Tweet> iterator = tweets.iterator();
+        while (iterator.hasNext()) {
+            Tweet tweet = iterator.next();
+            if (mTweetIdsHashSet.contains(tweet.getRemoteId())) {
+                iterator.remove();
+            } else {
+                mTweetIdsHashSet.add(tweet.getRemoteId());
+            }
+        }
+
+        mTweets.addAll(positionStart, tweets);
+        mTweetsRecyclerViewAdapter.notifyItemRangeInserted(positionStart, tweets.size());
     }
 
-    public void reload(){
+    public void reload() {
         getNewTweets();
     }
 

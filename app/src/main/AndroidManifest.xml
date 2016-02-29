@@ -70,6 +70,26 @@
         <activity
             android:name="com.sagarnileshshah.twitterclient.activities.UserProfileActivity"
             android:label="@string/title_activity_user_profile"
+            android:launchMode="singleTop"
+            android:parentActivityName="com.sagarnileshshah.twitterclient.activities.TimelineActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sagarnileshshah.twitterclient.activities.TimelineActivity" />
+        </activity>
+        <activity
+            android:name="com.sagarnileshshah.twitterclient.activities.FriendsActivity"
+            android:label="@string/title_activity_friends"
+            android:parentActivityName="com.sagarnileshshah.twitterclient.activities.UserProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.sagarnileshshah.twitterclient.activities.FollowersActivity"
+            android:label="@string/title_activity_followers"
+            android:parentActivityName="com.sagarnileshshah.twitterclient.activities.UserProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.sagarnileshshah.twitterclient.activities.SearchActivity"
+            android:label="@string/title_activity_search"
             android:parentActivityName="com.sagarnileshshah.twitterclient.activities.TimelineActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data

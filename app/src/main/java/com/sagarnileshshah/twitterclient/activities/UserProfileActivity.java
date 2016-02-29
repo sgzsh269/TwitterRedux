@@ -1,5 +1,6 @@
 package com.sagarnileshshah.twitterclient.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -7,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,6 +71,9 @@ public class UserProfileActivity extends BaseTimelineActivity {
     @Bind(R.id.sliding_tabs)
     TabLayout slidingTabs;
 
+    @Bind(R.id.pbLoading)
+    ProgressBar pbLoading;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +89,7 @@ public class UserProfileActivity extends BaseTimelineActivity {
         mTwitterClient = TwitterApplication.getRestClient();
 
         ProfileFragmentPagerAdapter profileFragmentPagerAdapter;
-        if(getIntent().getExtras() != null && getIntent().getLongExtra("userId", -1) != -1) {
+        if (getIntent().getExtras() != null && getIntent().getLongExtra("userId", -1) != -1) {
             long userId = getIntent().getLongExtra("userId", -1);
             loadUserProfile(userId);
             profileFragmentPagerAdapter = new ProfileFragmentPagerAdapter(getSupportFragmentManager(), UserProfileActivity.this, userId);
@@ -98,7 +103,9 @@ public class UserProfileActivity extends BaseTimelineActivity {
     }
 
     private void loadUserProfile() {
-        mTwitterClient.getUserProfile(this, new TextHttpResponseHandler() {
+        pbLoading.setVisibility(View.VISIBLE);
+
+        boolean requestSent = mTwitterClient.getUserProfile(this, new TextHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
@@ -106,19 +113,27 @@ public class UserProfileActivity extends BaseTimelineActivity {
                 Gson gson = gsonBuilder.create();
                 User user = gson.fromJson(responseString, User.class);
                 render(user);
+                pbLoading.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e(this.toString(), String.valueOf(statusCode));
                 Toast.makeText(UserProfileActivity.this, "Sorry, unable to get Profile. Please try again later.", Toast.LENGTH_LONG).show();
+                pbLoading.setVisibility(View.INVISIBLE);
             }
         });
+
+        if (!requestSent) {
+            pbLoading.setVisibility(View.INVISIBLE);
+        }
     }
 
 
     private void loadUserProfile(Long userId) {
-        mTwitterClient.getUserProfile(this, new TextHttpResponseHandler() {
+        pbLoading.setVisibility(View.VISIBLE);
+
+        boolean requestSent = mTwitterClient.getUserProfile(this, new TextHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
@@ -126,19 +141,24 @@ public class UserProfileActivity extends BaseTimelineActivity {
                 Gson gson = gsonBuilder.create();
                 User user = gson.fromJson(responseString, User.class);
                 render(user);
+                pbLoading.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e(this.toString(), String.valueOf(statusCode));
                 Toast.makeText(UserProfileActivity.this, "Sorry, unable to get Profile. Please try again later.", Toast.LENGTH_LONG).show();
+                pbLoading.setVisibility(View.INVISIBLE);
             }
         }, userId);
+
+        if (!requestSent) {
+            pbLoading.setVisibility(View.INVISIBLE);
+        }
     }
 
 
-
-    private void render(User user) {
+    private void render(final User user) {
         Glide.with(this).load(user.getProfileBannerUrl()).error(R.drawable.shape_banner_placeholder).placeholder(R.drawable.shape_banner_placeholder).into(ivBanner);
         Glide.with(this).load(user.getProfileImageUrl()).error(R.drawable.photo_placeholder).placeholder(R.drawable.photo_placeholder).dontAnimate().into(ivUserProfileImage);
         tvUserName.setText(user.getName());
@@ -167,7 +187,7 @@ public class UserProfileActivity extends BaseTimelineActivity {
             tvDisplayUrl.setVisibility(View.GONE);
         }
 
-        if(user.getStatus() != null && user.getStatus().getEntities() != null && user.getStatus().getEntities().getUrls() != null){
+        if (user.getStatus() != null && user.getStatus().getEntities() != null && user.getStatus().getEntities().getUrls() != null) {
             for (Url__ url : user.getStatus().getEntities().getUrls()) {
                 String wrapperUrl = url.getUrl();
                 String displayUrl = url.getDisplayUrl();
@@ -179,13 +199,31 @@ public class UserProfileActivity extends BaseTimelineActivity {
 
         tvFollowingCount.setText(Utils.formatNumber(user.getFriendsCount()));
         tvFollowersCount.setText(Utils.formatNumber(user.getFollowersCount()));
+
+        tvFollowingLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UserProfileActivity.this, FriendsActivity.class);
+                intent.putExtra("userId", user.getRemoteId());
+                startActivity(intent);
+            }
+        });
+
+        tvFollowersLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UserProfileActivity.this, FollowersActivity.class);
+                intent.putExtra("userId", user.getRemoteId());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         TimelineFragment timelineFragement = (TimelineFragment) mSmartFragmentStatePagerAdapter.getRegisteredFragment(viewpager.getCurrentItem());
-        if(timelineFragement != null){
+        if (timelineFragement != null) {
             timelineFragement.reload();
         }
     }

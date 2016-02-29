@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -115,6 +116,9 @@ public class TweetDetailActivity extends AppCompatActivity implements ComposeFra
 
     @Bind(R.id.viewActionDivider)
     View viewActionDivider;
+
+    @Bind(R.id.pbLoading)
+    ProgressBar pbLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
