@@ -96,6 +96,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sagarnileshshah.twitterclient.activities.TimelineActivity" />
         </activity>
+        <activity
+            android:name="com.sagarnileshshah.twitterclient.activities.DirectMessageActivity"
+            android:label="@string/title_activity_direct_message"
+            android:parentActivityName="com.sagarnileshshah.twitterclient.activities.TimelineActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

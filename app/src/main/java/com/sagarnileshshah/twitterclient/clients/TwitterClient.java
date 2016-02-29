@@ -112,9 +112,9 @@ public class TwitterClient extends OAuthBaseClient {
 		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
 			return false;
 		}
+		String apiUrl = getApiUrl("statuses/unretweet/" + tweetId + ".json");
 		RequestParams params = new RequestParams();
 		params.put("id", tweetId);
-		String apiUrl = getApiUrl("statuses/unretweet/" + tweetId + ".json");
 		client.post(apiUrl, params, handler);
 		return true;
 	}
@@ -123,9 +123,9 @@ public class TwitterClient extends OAuthBaseClient {
 		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
 			return false;
 		}
+		String apiUrl = getApiUrl("favorites/create.json");
 		RequestParams params = new RequestParams();
 		params.put("id", tweetId);
-		String apiUrl = getApiUrl("favorites/create.json");
 		client.post(apiUrl, params, handler);
 		return true;
 	}
@@ -188,6 +188,42 @@ public class TwitterClient extends OAuthBaseClient {
 		params.put("count", 10);
 		params.put("max_id", maxId);
 		client.get(apiUrl, params, handler);
+		return true;
+	}
+
+	public boolean getNewerMessages(Activity activity, AsyncHttpResponseHandler handler, long sinceId){
+		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
+			return false;
+		}
+		String apiUrl = getApiUrl("direct_messages.json");
+		RequestParams params = new RequestParams();
+		params.put("since_id", sinceId);
+		client.get(apiUrl, params, handler);
+		return true;
+	}
+
+	public boolean getOlderMessages(Activity activity, AsyncHttpResponseHandler handler, long maxId){
+		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
+			return false;
+		}
+
+		String apiUrl = getApiUrl("direct_messages.json");
+		RequestParams params = new RequestParams();
+		params.put("max_id", maxId);
+		client.get(apiUrl, params, handler);
+		return true;
+	}
+
+	public boolean sendDirectMessage(Activity activity, String to, String message, AsyncHttpResponseHandler handler){
+		if(!Utils.isNetworkAvailable(activity) || !Utils.isOnline(activity)){
+			return false;
+		}
+
+		String apiUrl = getApiUrl("direct_messages/new.json");
+		RequestParams params = new RequestParams();
+		params.put("screen_name", to);
+		params.put("text", message);
+		client.post(apiUrl, params, handler);
 		return true;
 	}
 }

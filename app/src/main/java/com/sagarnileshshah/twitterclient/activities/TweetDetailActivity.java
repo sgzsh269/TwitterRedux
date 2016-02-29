@@ -1,5 +1,6 @@
 package com.sagarnileshshah.twitterclient.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -155,6 +156,14 @@ public class TweetDetailActivity extends AppCompatActivity implements ComposeFra
         if (tweet.getUser() != null) {
             ivUserProfileImage.setImageResource(0);
             Glide.with(this).load(tweet.getUser().getProfileImageUrl()).error(R.drawable.photo_placeholder).placeholder(R.drawable.photo_placeholder).dontAnimate().into(ivUserProfileImage);
+            ivUserProfileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(TweetDetailActivity.this, UserProfileActivity.class);
+                    intent.putExtra("userId", tweet.getUser().getRemoteId());
+                    startActivity(intent);
+                }
+            });
             tvUserName.setText(tweet.getUser().getName());
             tvScreenName.setText("@" + tweet.getUser().getScreenName());
             tvReplyPlaceholder.setText("Reply to " + tweet.getUser().getName());

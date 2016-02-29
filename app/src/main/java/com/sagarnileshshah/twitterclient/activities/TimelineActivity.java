@@ -94,6 +94,10 @@ public class TimelineActivity extends BaseTimelineActivity {
                 Intent searchIntent = new Intent(this, SearchActivity.class);
                 startActivity(searchIntent);
                 return true;
+            case R.id.menu_dm:
+                Intent dmIntent = new Intent(this, DirectMessageActivity.class);
+                startActivity(dmIntent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -17,6 +17,7 @@
     <string name="following">following</string>
     <string name="followers">followers</string>
     <string name="search">Search</string>
+    <string name="dm">DM</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -25,5 +26,6 @@
     <string name="title_activity_friends">Following</string>
     <string name="title_activity_followers">Followers</string>
     <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_direct_message">Messages</string>
 
 </resources>
