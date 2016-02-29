@@ -62,6 +62,7 @@ Describe any challenges encountered while building the app.
 - [RoundedImageView](https://github.com/vinc3m1/RoundedImageView) - A fast ImageView that supports rounded corners, ovals, and circles.
 - [Joda-Time](http://www.joda.org/joda-time/) - A date and time library 
 - [fenster](https://github.com/malmstein/fenster) - A library to display videos in a TextureView using a custom MediaPlayer controller
+- [android-oauth-handler](https://github.com/codepath/android-oauth-handler) - Android OAuth Wrapper makes authenticating with APIs simple
 
 ## Attribution
 
