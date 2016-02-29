@@ -25,7 +25,7 @@ public class User extends Model {
 
     @SerializedName("id")
     @Expose
-    public Long id;
+    public Long remoteId;
     @SerializedName("id_str")
     @Expose
     public String idStr;
@@ -161,7 +161,7 @@ public class User extends Model {
      *     The id
      */
     public Long getRemoteId() {
-        return id;
+        return remoteId;
     }
 
     /**
@@ -169,8 +169,8 @@ public class User extends Model {
      * @param id
      *     The id
      */
-    public void setId(Long id) {
-        this.id = id;
+    public void setRemoteId(Long remoteId) {
+        this.remoteId = remoteId;
     }
 
     /**

@@ -159,6 +159,8 @@ public class UserProfileActivity extends BaseTimelineActivity {
 
 
     private void render(final User user) {
+        ivBanner.setImageResource(0);
+        ivUserProfileImage.setImageResource(0);
         Glide.with(this).load(user.getProfileBannerUrl()).error(R.drawable.shape_banner_placeholder).placeholder(R.drawable.shape_banner_placeholder).into(ivBanner);
         Glide.with(this).load(user.getProfileImageUrl()).error(R.drawable.photo_placeholder).placeholder(R.drawable.photo_placeholder).dontAnimate().into(ivUserProfileImage);
         tvUserName.setText(user.getName());

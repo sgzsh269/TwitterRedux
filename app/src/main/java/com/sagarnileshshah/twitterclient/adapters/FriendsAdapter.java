@@ -62,6 +62,7 @@ public class FriendsAdapter extends ArrayAdapter<User> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
+        viewHolder.ivUserProfileImage.setImageResource(0);
         Glide.with(mContext).load(user.getProfileImageUrl()).error(R.drawable.photo_placeholder).placeholder(R.drawable.photo_placeholder).dontAnimate().into(viewHolder.ivUserProfileImage);
 
         viewHolder.tvUserName.setText(user.getName());

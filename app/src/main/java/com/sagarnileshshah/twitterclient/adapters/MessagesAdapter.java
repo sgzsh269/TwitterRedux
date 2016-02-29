@@ -66,6 +66,7 @@ public class MessagesAdapter extends ArrayAdapter<Message> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
+        viewHolder.ivUserProfileImage.setImageResource(0);
         Glide.with(mContext).load(message.getSender().getProfileImageUrl()).error(R.drawable.photo_placeholder).placeholder(R.drawable.photo_placeholder).dontAnimate().into(viewHolder.ivUserProfileImage);
 
         viewHolder.tvUserName.setText(message.getSender().getName());
